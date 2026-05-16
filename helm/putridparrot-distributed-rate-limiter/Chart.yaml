@@ -1,0 +1,6 @@
+apiVersion: v2
+name: putridparrot-distributed-rate-limiter
+description: Helm chart for PutridParrot Distributed Rate Limiter and Redis
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

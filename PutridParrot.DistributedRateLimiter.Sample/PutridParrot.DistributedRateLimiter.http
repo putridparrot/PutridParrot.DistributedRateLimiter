@@ -1,0 +1,6 @@
+@PutridParrot.DistributedRateLimiter_HostAddress = http://localhost:5034
+
+GET {{PutridParrot.DistributedRateLimiter_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

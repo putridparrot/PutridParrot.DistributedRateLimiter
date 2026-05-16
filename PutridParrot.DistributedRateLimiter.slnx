@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="PutridParrot.DistributedRateLimiter.Tests/PutridParrot.DistributedRateLimiter.Tests.csproj" />
+  <Project Path="PutridParrot.DistributedRateLimiter.Sample/PutridParrot.DistributedRateLimiter.Sample.csproj" />
+  <Project Path="PutridParrot.DistributedRateLimiter/PutridParrot.DistributedRateLimiter.csproj" />
+</Solution>

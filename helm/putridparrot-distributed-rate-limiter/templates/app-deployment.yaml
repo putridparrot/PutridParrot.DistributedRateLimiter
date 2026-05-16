@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "drl.name" . }}
+  namespace: {{ include "drl.namespace" . }}
+  labels:
+    app: {{ include "drl.name" . }}
+spec:
+  replicas: {{ .Values.app.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "drl.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "drl.name" . }}
+    spec:
+      containers:
+        - name: app
+          image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}"
+          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.app.service.targetPort }}
+          env:
+            - name: ASPNETCORE_HTTP_PORTS
+              value: {{ .Values.app.env.aspnetcoreHttpPorts | quote }}
+            - name: DistributedRateLimiting__RedisConnectionString
+              value: {{ printf "%s:%v" .Values.redis.name .Values.redis.service.port | quote }}
+            - name: DistributedRateLimiting__PermitLimit
+              value: {{ .Values.app.env.permitLimit | quote }}
+            - name: DistributedRateLimiting__WindowSeconds
+              value: {{ .Values.app.env.windowSeconds | quote }}
+            - name: DistributedRateLimiting__KeyPrefix
+              value: {{ .Values.app.env.keyPrefix | quote }}
+          readinessProbe:
+            httpGet:
+              path: /weatherforecast
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /weatherforecast
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+{{ toYaml .Values.app.resources | indent 12 }}

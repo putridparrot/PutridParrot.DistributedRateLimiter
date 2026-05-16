@@ -1,0 +1,42 @@
+namespaceOverride: ""
+
+app:
+  name: putridparrot-distributed-rate-limiter
+  replicaCount: 1
+  image:
+    repository: putridparrot-distributed-rate-limiter
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 8080
+  env:
+    aspnetcoreHttpPorts: "8080"
+    permitLimit: "5"
+    windowSeconds: "30"
+    keyPrefix: "drl"
+  resources: {}
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: putridparrot-distributed-rate-limiter.local
+    path: /
+    pathType: Prefix
+
+redis:
+  enabled: true
+  name: redis
+  image:
+    repository: redis
+    tag: 7-alpine
+    pullPolicy: IfNotPresent
+  service:
+    port: 6379
+  args:
+    - redis-server
+    - --save
+    - ""
+    - --appendonly
+    - "no"

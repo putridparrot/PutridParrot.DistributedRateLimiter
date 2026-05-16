@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "drl.name" . }}
+  namespace: {{ include "drl.namespace" . }}
+  labels:
+    app: {{ include "drl.name" . }}
+spec:
+  type: {{ .Values.app.service.type }}
+  selector:
+    app: {{ include "drl.name" . }}
+  ports:
+    - name: http
+      port: {{ .Values.app.service.port }}
+      targetPort: http

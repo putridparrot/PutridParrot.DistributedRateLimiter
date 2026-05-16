@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: putridparrot-distributed-rate-limiter
+  namespace: putridparrot-distributed-rate-limiter
+  labels:
+    app: putridparrot-distributed-rate-limiter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: putridparrot-distributed-rate-limiter
+  template:
+    metadata:
+      labels:
+        app: putridparrot-distributed-rate-limiter
+    spec:
+      containers:
+        - name: app
+          image: putridparrot-distributed-rate-limiter:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: ASPNETCORE_HTTP_PORTS
+              value: "8080"
+            - name: DistributedRateLimiting__RedisConnectionString
+              value: redis:6379
+            - name: DistributedRateLimiting__PermitLimit
+              value: "5"
+            - name: DistributedRateLimiting__WindowSeconds
+              value: "30"
+            - name: DistributedRateLimiting__KeyPrefix
+              value: "drl"
+          readinessProbe:
+            httpGet:
+              path: /weatherforecast
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /weatherforecast
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: putridparrot-distributed-rate-limiter
+  namespace: putridparrot-distributed-rate-limiter
+  labels:
+    app: putridparrot-distributed-rate-limiter
+spec:
+  selector:
+    app: putridparrot-distributed-rate-limiter
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+  type: ClusterIP

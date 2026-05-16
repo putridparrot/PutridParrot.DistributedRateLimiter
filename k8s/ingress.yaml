@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: putridparrot-distributed-rate-limiter
+  namespace: putridparrot-distributed-rate-limiter
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+    - host: putridparrot-distributed-rate-limiter.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: putridparrot-distributed-rate-limiter
+                port:
+                  number: 80
